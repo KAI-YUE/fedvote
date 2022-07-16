@@ -3,11 +3,14 @@ import json
 import os
 import numpy as np
 
-def load_config():
+def load_config(filename=None):
     """Load configurations of yaml file"""
     current_path = os.path.dirname(__file__)
 
-    with open(os.path.join(current_path, "config.yaml"), "r") as fp:
+    if filename is None:
+        filename = "config.yaml"
+
+    with open(os.path.join(current_path, filename), "r") as fp:
         config = yaml.load(fp, Loader=yaml.FullLoader)
 
     # Empty class for yaml loading

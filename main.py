@@ -68,7 +68,6 @@ def train(model, config, logger, record):
             local_packages[user_id] = local_package
 
         # Update the global model
-        # global_updater.global_step(model, local_packages, record=record)
         global_updater.global_step(model, local_packages, attacker_list=attacker_list, record=record)
 
         if config.save:
@@ -87,8 +86,8 @@ def train(model, config, logger, record):
     elif config.mode == 2:
         torch.save(model.state_dict(), "FedAvg.pth")
 
-def main():
-    config = load_config()
+def main(config_filename):
+    config = load_config(config_filename)
     logger = init_logger(config)
 
     # ----------------------------

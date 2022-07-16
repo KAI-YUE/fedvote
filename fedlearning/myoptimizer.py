@@ -232,17 +232,38 @@ class GlobalUpdater(object):
             voted_results = OrderedDict()
 
             if self.mode == 0:
-                for w_name, w_value in accumulated_weight_state_dict.items():
-                    zeros_tensor = torch.zeros_like(w_value)
-                    ones_tensor = torch.ones_like(w_value)            
-                    voted_result = torch.where(w_value>(1/3*self.num_users), ones_tensor, zeros_tensor)
-                    voted_result = torch.where(w_value<-(1/3*self.num_users), -ones_tensor, zeros_tensor)
-                    voted_results[w_name] = voted_result
+                # set counters for -1, 0, 1; 
+                # toy example: {0, 0, 0, 1} and {-1, 1, 0, 1}, the aggregated results cannot tell the difference  
+                num_ones = OrderedDict()
+                num_zeros = OrderedDict()
+                for w_name, w_value in local_packages[idx].items():
+                    num_ones[w_name] = torch.zeros_like(w_value)
+                    num_zeros[w_name] = torch.zeros_like(w_value)
+                    voted_results[w_name] = -torch.ones_like(w_value)
+
+                for user_id, package in local_packages.items():
+                    for w_name, w_value in package.items():
+                        num_ones[w_name] += torch.sum(w_value == 1)
+                        num_zeros[w_name] += torch.sum(w_value == 0)
+
+                for w_name, w_value in local_packages[idx].items():
+                    voted_results[w_name] = torch.where(num_ones > 1/3*self.num_users, torch.ones_like(w_value), voted_results[w_name]) 
+                    voted_results[w_name] = torch.where(num_zeros > 1/3*self.num_users, torch.zeros_like(w_value), voted_results[w_name])
 
             elif self.mode == 1:
+                # record the opinion of the minority 
+                # minority = OrderedDict()
+
+                accumulated_weight = WeightBuffer(local_packages[idx], "zeros")
+                for user_id, package in local_packages.items():
+                    accumulated_weight = WeightBuffer(package) + accumulated_weight
+
+                accumulated_weight_state_dict = accumulated_weight.state_dict()
+
                 for w_name, w_value in accumulated_weight_state_dict.items():
+                    zeros_tensor = torch.zeros_like(w_value)
                     ones_tensor = torch.ones_like(w_value)          
-                    voted_result = torch.where(w_value>(1/2*self.num_users), ones_tensor, -ones_tensor)
+                    voted_result = torch.where(w_value>0, ones_tensor, -ones_tensor)
                     voted_results[w_name] = voted_result
             
             # Generate attacker packages
@@ -278,7 +299,6 @@ class GlobalUpdater(object):
             accumulated_weight = WeightBuffer(local_packages[idx], "zeros")
             for user_id, package in local_packages.items():
                 accumulated_weight = WeightBuffer(package)*(self.vote_weight[user_id]) + accumulated_weight
-                # accumulated_weight = WeightBuffer(package)*(1/30) + accumulated_weight
 
             accumulated_weight_state_dict = accumulated_weight.state_dict()
             for w_name, w_value in accumulated_weight_state_dict.items():

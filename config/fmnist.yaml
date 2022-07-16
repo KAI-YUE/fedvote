@@ -32,7 +32,8 @@ user_with_data: "data/user_with_data/cifar/iid/iid_mapping_0.dat"
 # momentum:         momentum settings for SGD  
 
 # qnn_model: "qnn"
-qnn_model: "qnn_vgg"
+qnn_model: "qnn_lenet"
+# qnn_model: "qnn_vgg"
 k: 1.5
 
 local_batch_size: 100
@@ -51,7 +52,8 @@ weight_decay: 0.
 freeze_fc: true
 # full_model: "NaiveCNN"
 # full_model: "bn"
-full_model: "vgg"
+full_model: "lenet"
+# full_model: "vgg"
 qnn_weight_dir: ""
 full_weight_dir: ""
 # full_weight_dir: "ori_50.pth"
@@ -65,8 +67,6 @@ full_weight_dir: ""
 # sample_size:   the size of one sample [height x width/num_of_features]
 # classes:      the number of classes
 record_dir:     ../{}.dat
-# test_data_dir:  data/mnist/test.dat
-# train_data_dir: data/mnist/train.dat
 test_data_dir:  data/fmnist/test.dat
 train_data_dir: data/fmnist/train.dat
 sample_size:
@@ -74,15 +74,6 @@ sample_size:
 - 28
 channels: 1
 classes: 10
-
-# record_dir:     ../This{}.dat
-# test_data_dir:  data/cifar/test.dat
-# train_data_dir: data/cifar/train.dat
-# sample_size:
-# - 32
-# - 32
-# channels: 3
-# classes: 10
 
 
 # Log configurations
