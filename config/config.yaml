@@ -1,0 +1,118 @@
+# device: "cuda" | "cpu"
+# mode 0: train the local ternary neural network 
+# mode 1: train the local binary neural network
+# mode 2: train the full precision model with FedAvg
+device: cuda
+mode: 1
+save: false
+imbalance: false
+num_attackers: 0
+
+# distributed networks
+# users:            number of users
+# random_sampling:   whether or not perform random sampling before each iteration
+# sampling_fraction: the fraction of users to sample
+# alpha:             the alpha parameter of the Dirichlet distribution 
+rounds: 100
+users: 31
+random_sampling: false
+sampling_fraction: 1
+iid: true
+# iid: false
+# alpha: 0.01
+user_with_data: ""
+user_with_data: "data/user_with_data/cifar/iid/iid_mapping_0.dat"
+# user_with_data: "data/user_with_data/cifar/a0.5/user_dataidx_map_0.50_0.dat"
+
+# hyperparameters and model type
+# qnn_model:        quantized neural network model 
+# local_batch_size: the size of the local batch
+# tau:              number of local iterations
+# rounds:           total communication rounds upper bound
+# momentum:         momentum settings for SGD  
+
+# qnn_model: "qnn"
+qnn_model: "qnn_lenet"
+# qnn_model: "qnn_vgg"
+k: 1.5
+
+local_batch_size: 100
+tau: 40
+# lr: 0.05
+# lr: 0.05  # iid
+# lr: 0.02
+lr: 0.01  # cifar-iid
+# lr: 0.025
+# lr: 0.01
+# lr: 0.02  # cifar non-iid
+# lr: 0.05
+# lr: 0.0005
+# lr: 0.0003
+# lr: 0.001   #fedavg iid
+# lr: 0.0005  #fedavg cifar iid
+# lr: 0.0005    #fedavg fmnist non-iid
+lr_scaler: 0.33
+scheduler:
+# - 0
+# - 5
+# - 10
+# - 15
+# - 20
+# - 25
+# - 30
+# - 35
+# - 40
+- 50
+# - 60
+# - 70
+# - 80
+# - 90
+- 1000
+momentum: 0
+weight_decay: 0.
+# weight_decay: 1.e-3
+# weight_decay: 0.01
+
+
+freeze_fc: true
+# full_model: "NaiveCNN"
+# full_model: "bn"
+full_model: "lenet"
+# full_model: "vgg"
+qnn_weight_dir: ""
+full_weight_dir: ""
+# full_weight_dir: "ori_50.pth"
+# qnn_weight_dir: "vote_60.pth"
+# full_weight_dir: "data/heuristic/full_init.pth"
+
+
+# Simulation dataset configurations
+# test_data_dir : the directory to the testDataset
+# train_data_dir: the directory to the trainDataset
+# sample_size:   the size of one sample [height x width/num_of_features]
+# classes:      the number of classes
+record_dir:     ../{}.dat
+# test_data_dir:  data/mnist/test.dat
+# train_data_dir: data/mnist/train.dat
+test_data_dir:  data/fmnist/test.dat
+train_data_dir: data/fmnist/train.dat
+sample_size:
+- 28
+- 28
+channels: 1
+classes: 10
+
+# record_dir:     ../This{}.dat
+# test_data_dir:  data/cifar/test.dat
+# train_data_dir: data/cifar/train.dat
+# sample_size:
+# - 32
+# - 32
+# channels: 3
+# classes: 10
+
+
+# Log configurations
+log_iters:   1
+log_level:   "INFO"
+log_file:    "./train.log"
