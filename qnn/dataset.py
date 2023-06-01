@@ -131,7 +131,7 @@ def assign_user_data(config, logger):
     Returns:
         dict: a dict contains train_data, test_data and user_with_data[userID:sampleID].
     """
-    
+    print(os.getcwd())
     with open(config.train_data_dir, "rb") as fp:
         train_data = pickle.load(fp)
     

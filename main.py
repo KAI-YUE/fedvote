@@ -86,7 +86,7 @@ def train(model, config, logger, record):
     elif config.mode == 2:
         torch.save(model.state_dict(), "FedAvg.pth")
 
-def main(config_filename):
+def main(config_filename="config.yaml"):
     config = load_config(config_filename)
     logger = init_logger(config)
 
